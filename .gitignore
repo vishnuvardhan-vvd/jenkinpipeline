@@ -1,0 +1,36 @@
+# Node.js dependencies
+node_modules/
+npm-debug.log*
+
+# Environment variables
+.env
+
+# Logs
+logs/
+*.log
+debug.log
+
+# Docker files
+*.swp
+docker-compose.override.yml
+.dockerignore
+
+# IDE and editor files
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.VC.db
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Backup files
+*.bak
+*.tmp
+
+# Other unwanted files
+dist/
+coverage/
