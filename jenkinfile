@@ -1,0 +1,64 @@
+pipeline {
+    agent any
+
+    // Define environment variables to be used throughout the pipeline
+    environment {
+        // Replace with your actual DockerHub username and image name
+        DOCKER_IMAGE = 'vishnuvardhan9391/nodejs-demo-app:v1.0'
+    }
+
+    stages {
+        stage('Checkout Code') {
+            steps {
+                // Checkout the source code from the repository (SCM configuration in Jenkins)
+                checkout scm
+            }
+        }
+
+        stage('Install & Build') {
+            steps {
+                // Install dependencies; assuming a Node.js project. You can modify these commands based on your tech stack.
+                sh 'npm install'
+                // Uncomment if your application has a build step (e.g., for a production build)
+                // sh 'npm run build'
+            }
+        }
+
+        stage('Test') {
+            steps {
+                // Run tests. Ensure your project has a test script defined in package.json (for a Node.js project)
+                sh 'npm test'
+            }
+        }
+
+        stage('Docker Build') {
+            steps {
+                // Build the Docker image using the Dockerfile present in the root directory
+                sh "docker build -t ${DOCKER_IMAGE} ."
+            }
+        }
+
+        stage('Docker Deploy') {
+            steps {
+                // Log in and push the Docker image.
+                // This utilizes the Jenkins Docker Registry plugin. Make sure you have added your DockerHub credentials into Jenkins,
+                // and reference them with credentialsId (e.g., 'docker-hub-credentials').
+                withDockerRegistry([ credentialsId: 'docker-hub-credentials', url: '' ]) {
+                    sh "docker push ${DOCKER_IMAGE}"
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            echo 'Pipeline execution completed.'
+        }
+        success {
+            echo 'Build and deployment succeeded!'
+        }
+        failure {
+            echo 'Build or deployment failed. Please check the console output for errors.'
+        }
+    }
+}
